@@ -33,7 +33,12 @@ const filtered = courses.filter(c => {
     if (filterCategory && c.category !== filterCategory) return false
     if (filterLevel && c.level !== filterLevel) return false
     return true
-})
+
+}
+)
+console.log("Search Term:", search);
+console.log("Courses:", courses);
+console.log("Filtered:", filtered);
 
 
 const handleDelete = (id) => {
