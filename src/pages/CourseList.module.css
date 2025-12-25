@@ -1,0 +1,28 @@
+.container {
+  padding: 16px;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.filters {
+  display: flex;
+  gap: 8px;
+}
+
+.search {
+  width: 240px;
+}
+
+.select {
+  width: 160px;
+}
+
+.thumbnail {
+  width: 80px;
+  object-fit: cover;
+}
