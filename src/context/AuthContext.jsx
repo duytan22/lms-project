@@ -1,29 +1,18 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState } from 'react'
 
-const AuthContext = createContext();
+const AuthContext = createContext(null)
 
-export function AuthProvider({ children }) {
-    const [user, setUser] = useState(null);
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null)
 
-    const login = async ({ email, password }) => {
-    if (password.length >= 6) {
-        setUser({ email });
-        return { ok: true };
-    }
+  const login = (userData) => setUser(userData)
+  const logout = () => setUser(null)
 
-    return { ok: false, message: "Password must be at least 6 characters" };
-};
-
-
-    const logout = () => setUser(null);
-
-    return (
-        <AuthContext.Provider value={{ user, login, logout }}>
-            {children}
-        </AuthContext.Provider>
-    );
+  return (
+    <AuthContext.Provider value={{ user, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  )
 }
 
-export function useAuth() {
-    return useContext(AuthContext);
-}
+export const useAuth = () => useContext(AuthContext)

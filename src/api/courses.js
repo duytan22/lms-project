@@ -1,4 +1,4 @@
-import axiosClient from './axiosClient'
+// src/api/courses.js
 
 const STORAGE_KEY = 'lms_courses_v1'
 
@@ -15,15 +15,30 @@ const sample = [
 ]
 
 // ==========================
-// FAKE BACKEND USING LOCALSTORAGE
+// LOCAL STORAGE HELPERS
 // ==========================
 const getLocalCourses = () => {
-  const r = localStorage.getItem(STORAGE_KEY)
-  if (!r) {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+
+    if (!raw) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(sample))
+      return sample
+    }
+
+    const parsed = JSON.parse(raw)
+
+    if (!Array.isArray(parsed)) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(sample))
+      return sample
+    }
+
+    return parsed
+  } catch (e) {
+    console.error('loadCourses error:', e)
     localStorage.setItem(STORAGE_KEY, JSON.stringify(sample))
     return sample
   }
-  return JSON.parse(r)
 }
 
 const saveLocalCourses = (list) => {
@@ -31,41 +46,36 @@ const saveLocalCourses = (list) => {
 }
 
 // ==========================
-// API FUNCTIONS (AXIOS STYLE)
+// API FUNCTIONS (NO AXIOS CALL → NO CRASH)
 // ==========================
 
 export const getCourses = async () => {
-  // fake axios call
-  await axiosClient.get('/courses')
   return getLocalCourses()
 }
 
 export const getCourseById = async (id) => {
-  await axiosClient.get(`/courses/${id}`)
   const list = getLocalCourses()
   return list.find(i => i.id === id)
 }
 
 export const addCourse = async (course) => {
-  await axiosClient.post('/courses', course)
-
   const list = getLocalCourses()
   const id = Date.now().toString()
+
   const newCourse = { ...course, id }
-
   list.unshift(newCourse)
-  saveLocalCourses(list)
 
+  saveLocalCourses(list)
   return newCourse
 }
 
 export const updateCourse = async (id, payload) => {
-  await axiosClient.put(`/courses/${id}`, payload)
-
   const list = getLocalCourses()
   const idx = list.findIndex(i => i.id === id)
 
-  if (idx === -1) throw new Error('Not found')
+  if (idx === -1) {
+    throw new Error('Not found')
+  }
 
   list[idx] = { ...list[idx], ...payload }
   saveLocalCourses(list)
@@ -74,8 +84,6 @@ export const updateCourse = async (id, payload) => {
 }
 
 export const deleteCourse = async (id) => {
-  await axiosClient.delete(`/courses/${id}`)
-
   const list = getLocalCourses()
   const next = list.filter(i => i.id !== id)
   saveLocalCourses(next)
