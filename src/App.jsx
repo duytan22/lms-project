@@ -9,59 +9,78 @@ import { useAuth } from './context/AuthContext'
 
 const { Header, Content } = Layout
 
-export default function App() {
+const App = () => {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Header style={{ background: '#001529', padding: '0 24px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div style={{ color: '#fff', fontWeight: 700 }}>LMS</div>
 
-          <div>
-            {user ? (
-              <Button danger onClick={() => { logout(); navigate('/login') }}>
-                Logout
-              </Button>
-            ) : (
-              <Link to="/login"><Button type="primary">Login</Button></Link>
-            )}
-          </div>
+          {user ? (
+            <Button
+              danger
+              onClick={() => {
+                logout()
+                navigate('/login')
+              }}
+            >
+              Logout
+            </Button>
+          ) : (
+            <Link to="/login">
+              <Button type="primary">Login</Button>
+            </Link>
+          )}
         </div>
       </Header>
 
       <Content style={{ padding: 24 }}>
         <Routes>
-
           <Route path="/login" element={<Login />} />
 
-          <Route path="/courses" element={
-            <ProtectedRoute>
-              <CourseList />
-            </ProtectedRoute>
-          } />
+          <Route
+            path="/courses"
+            element={
+              <ProtectedRoute>
+                <CourseList />
+              </ProtectedRoute>
+            }
+          />
 
-          <Route path="/courses/add" element={
-            <ProtectedRoute>
-              <AddCourse />
-            </ProtectedRoute>
-          } />
+          <Route
+            path="/courses/add"
+            element={
+              <ProtectedRoute>
+                <AddCourse />
+              </ProtectedRoute>
+            }
+          />
 
-          <Route path="/courses/edit/:id" element={
-            <ProtectedRoute>
-              <EditCourse />
-            </ProtectedRoute>
-          } />
+          <Route
+            path="/courses/edit/:id"
+            element={
+              <ProtectedRoute>
+                <EditCourse />
+              </ProtectedRoute>
+            }
+          />
 
-          <Route path="/" element={
-            <ProtectedRoute>
-              <CourseList />
-            </ProtectedRoute>
-          } />
-
+          {/* Default route */}
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <Navigate to="/courses" replace />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </Content>
     </Layout>
   )
 }
+
+export default App
